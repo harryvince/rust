@@ -9,9 +9,9 @@ struct Quote {
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
-    let request_url: String = "https://motivational-quote-api.herokuapp.com/quotes/random".to_string();
+    let request_url = "https://motivational-quote-api.herokuapp.com/quotes/random";
     println!("Fetching -> {}", request_url);
-    let response = reqwest::get(&request_url).await?;
+    let response = reqwest::get(request_url).await?;
 
     let quote: Quote = response.json().await?;
     println!("Quote: {}", quote.quote);
