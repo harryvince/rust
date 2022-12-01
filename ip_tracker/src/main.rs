@@ -6,15 +6,11 @@ use std::io::Write;
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     let args: Vec<String> = env::args().collect();
-    let ip_to_locate = check_args(args);
+    let ip_to_locate = check_args(&args);
     let request_url = "https://iplocation.com";
-    let mut params = HashMap::new();
-    params.insert("ip", ip_to_locate);
+    let params: HashMap<&str, &String> = [("ip", &ip_to_locate)].into_iter().collect();
     let client = reqwest::Client::new();
-    let response = client.post(request_url)
-        .form(&params)
-        .send()
-        .await?;
+    let response = client.post(request_url).form(&params).send().await?;
     let ip_data = response.text().await?;
     let json_response: serde_json::Value = serde_json::from_str(&ip_data).unwrap_or_else(|_| {
         println!("Unable to complete lookup!");
@@ -24,7 +20,7 @@ async fn main() -> Result<(), Error> {
     Ok(())
 }
 
-fn check_args(args: Vec<String>) -> String {
+fn check_args(args: &Vec<String>) -> String {
     if args.len() < 2 {
         print!("Enter a value to check: ");
         io::stdout().flush().unwrap();
